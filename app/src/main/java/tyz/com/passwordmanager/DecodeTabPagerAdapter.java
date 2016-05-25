@@ -10,10 +10,6 @@ import android.support.v4.app.FragmentStatePagerAdapter;
  * FragmentPagerAdapter for Activity and Help Screens.
  */
 
-
-
-
-
 public class DecodeTabPagerAdapter extends FragmentStatePagerAdapter {
 
     public enum Tab {

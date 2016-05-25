@@ -14,7 +14,7 @@ import android.widget.Toast;
 
 
 public class ScreenPasswordDecodeFragment extends BaseFragment {
-    EditText mMaster, mKey;
+    static EditText mMaster, mKey;
     TextView mTranslate;
     OnMasterPasswordSetListener mCallback;
 
@@ -34,6 +34,7 @@ public class ScreenPasswordDecodeFragment extends BaseFragment {
         return fragment;
 
     }
+
 
     public ScreenPasswordDecodeFragment() {
         // Required empty public constructor
@@ -79,13 +80,13 @@ public class ScreenPasswordDecodeFragment extends BaseFragment {
                 // then translate
                 if (validateKey(mKey.getText().toString(),mMaster.getText().toString(),false, which)){
                     mKey.setBackgroundColor(Color.GREEN);
-                    mTranslate.setText(getMasterOffsets(mKey.getText().toString()));
+                    mTranslate.setText(getMasterOffsets(mKey.getText().toString(),mMaster.getText().toString()));
                 } else
                 //If the characters in the key are numeric only then reverse
                 // translation
                 if(mKey.getText().toString().matches("^[0-9]+$")) {
                     mKey.setBackgroundColor(Color.BLUE);
-                    mTranslate.setText(getMasterLetters(mKey.getText().toString()));
+                    mTranslate.setText(getMasterLetters(mKey.getText().toString(), mMaster.getText().toString()));
                 }else
                 //If the entry in the key field is invalid.
                 {
@@ -126,11 +127,11 @@ public class ScreenPasswordDecodeFragment extends BaseFragment {
     With input of a string of numbers
     Find the characters in the master at those offsets
      */
-    String getMasterLetters(String inKey){
+    static String getMasterLetters(String inKey, String master){
         StringBuilder sbOut = new StringBuilder(inKey.length());
         for(int i = 0;i<inKey.length();i++){
             int offset = Integer.parseInt(inKey.substring(i,i+1));
-            sbOut.append(mMaster.getText().charAt(offset));
+            sbOut.append(master.charAt(offset));
         }
         return sbOut.toString();
     }
@@ -152,11 +153,11 @@ public class ScreenPasswordDecodeFragment extends BaseFragment {
     Find the offsets of those characters in the master and build a
     string from them.
      */
-    String getMasterOffsets(String inKey){
+    static String getMasterOffsets(String inKey, String master){
         StringBuilder sbOut = new StringBuilder(inKey.length());
         char [] myKey = inKey.toCharArray();
         for(char a : myKey){
-            sbOut.append(mMaster.getText().toString().indexOf(a));
+            sbOut.append(master.indexOf(a));
         }
         return sbOut.toString();
     }
@@ -165,8 +166,10 @@ public class ScreenPasswordDecodeFragment extends BaseFragment {
      * All chars in key must exist in master
      * Future: may allow case insensitivity and
      *  typed escape characters (cap, digit, sep, etc.)
+     *
+     *  Note isCaseSenstive and invalidBits are not implemented
      */
-    boolean validateKey(String inKey, String inMaster, boolean isCaseSensitive, int[] invalidBits){
+    static boolean validateKey(String inKey, String inMaster, boolean isCaseSensitive, int[] invalidBits){
         for(int count = 0; count < inKey.length(); count++ ){
             if(!inMaster.contains(inKey.subSequence(count, count+1))) {
                 return false;
@@ -184,7 +187,7 @@ public class ScreenPasswordDecodeFragment extends BaseFragment {
      *      digits are problematic re representation.
      *  all lc
      */
-    boolean validateMaster(String master){
+    static boolean validateMaster(String master){
         return (master.length() == 10 && // Length = 10
                 master.matches("^[a-zA-Z_]*$") && // alpha, allow underscore
                 master.toLowerCase().equals(master) &&  // all upper case
@@ -193,10 +196,13 @@ public class ScreenPasswordDecodeFragment extends BaseFragment {
     }
 
     /**
-     * Efficient uniqueness check. Not that this will not
-     * differentiate case. Test using intuitive algorithm.
+     * Very efficient uniqueness check. Should test using intuitive algorithm.
+     * Each letter is assigned a bit location. If bit is set
+     * character exists in inStr
+     *
+     * Note: that this will not differentiate case.
      */
-    boolean checkUniqueBV(String inStr){
+    static boolean checkUniqueBV(String inStr){
         int flags = 0, // use integer as bit vector
             flagIndex;
         boolean wasSeen;

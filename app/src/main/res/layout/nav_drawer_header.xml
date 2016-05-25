@@ -15,21 +15,21 @@
         android:layout_width="64dp"
         android:layout_height="64dp"
         android:id="@+id/imageView"
-        />
+        android:src="@mipmap/ic_pm" />
 
     <TextView
         android:fontFamily="sans-serif-medium"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:text="Daniel Kahn"
+        android:text="@string/developer_name"
         android:theme="@style/Shock"
         android:id="@+id/textView"/>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="t1.tyz.com"
+        android:text="passwordmanager.tyz.com"
         android:textColor="#FFFFFF"
         android:id="@+id/textView2"
 

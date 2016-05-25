@@ -19,6 +19,7 @@
     <string name="tempDescText">Bad Description</string>
     <string name="help">Help</string>
     <string name="decode">Password Decode</string>
+    <string name="developer_name">Daniel Kahn</string>
     <string-array name="screen_titles">
         <item>@string/m0</item>
         <item>@string/m1</item>
