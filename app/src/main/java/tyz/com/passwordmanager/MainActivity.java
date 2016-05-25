@@ -174,8 +174,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     break;
                 case R.id.m2: //Todo:
                 default:
-                    throw new Resources.NotFoundException("Attempt to load non-existant fragment:" + which);
-
+                    fragment =  ScreenNotImplemented.newInstance();
             }
 
             // Create a new Fragment to be placed in the activity layout
@@ -187,7 +186,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
             // Add the fragment to the 'fragment_container' FrameLayout
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.fragment_container, fragment).commit();
+                    .replace(R.id.fragment_container, fragment).commit();
         }
     }
 
