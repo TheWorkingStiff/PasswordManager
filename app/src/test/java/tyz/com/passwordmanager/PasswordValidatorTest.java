@@ -33,5 +33,25 @@ public class PasswordValidatorTest {
     public void passwordValidator_GetMasterLetters_ReturnsFalse() {
         assertFalse(!ScreenPasswordDecodeFragment.getMasterLetters("0123", "nosecurity").equals("nose"));
     }
+    @Test
+    public void passwordValidator_GetMasterOffsets_ReturnsTrue() {
+        assertTrue(ScreenPasswordDecodeFragment.getMasterOffsets("nose", "nosecurity").equals("0123"));
+        assertTrue(ScreenPasswordDecodeFragment.getMasterOffsets("rity", "nosecurity").equals("6789"));
+        assertTrue(ScreenPasswordDecodeFragment.getMasterOffsets("nosecurity", "nosecurity").equals("0123456789"));
+    }
+    @Test
+    public void passwordValidator_GetMasterOffsets_ReturnsFalse() {
+        assertFalse(!ScreenPasswordDecodeFragment.getMasterOffsets("nose", "nosecurity").equals("0123"));
+    }
 
+    @Test
+    public void passwordValidator_ValidateMaster_ReturnsFalse() {
+        // redundancy is checked in MasterHasUniqueChars
+        assertFalse(ScreenPasswordDecodeFragment.validateMaster("Gosecurity")); //No caps
+        assertFalse(ScreenPasswordDecodeFragment.validateMaster("nosecurityx")); //11 letters
+        assertFalse(ScreenPasswordDecodeFragment.validateMaster("nosecurit")); //9 letters
+        assertFalse(ScreenPasswordDecodeFragment.validateMaster("nosecurit1")); //illegal char
+        assertFalse(ScreenPasswordDecodeFragment.validateMaster("nosecurit1")); //illegal char
+        assertFalse(ScreenPasswordDecodeFragment.validateMaster(null)); //illegal char
+    }
 }

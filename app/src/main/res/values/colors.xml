@@ -1,15 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <!-- https://coolors.co/2b2d42-8d99ae-edf2f4-ef233c-d90429 -->
-    <color name="colorOtherAccent1">#2b2d42</color>
-    <color name="colorOtherAccent2">#ef233c</color>
-
-    <color name="colorPrimaryDark">#8d99ae</color>
-    <color name="colorPrimary">#edf2f4</color>
-    <color name="colorAccent">#d90429</color>
-
-
-    <color name="colorOrigPrimary">#3F51B5</color>
-    <color name="colorOrigPrimaryDark">#303F9F</color>
-    <color name="colorOrigAccent">#FF4081</color>
-</resources>
+    <resources>
+        <color name="primary">#2196F3</color>
+        <color name="primary_dark">#1976D2</color>
+        <color name="primary_light">#BBDEFB</color>
+        <color name="accent">#9E9E9E</color>
+        <color name="primary_text">#212121</color>
+        <color name="secondary_text">#727272</color>
+        <color name="icons">#FFFFFF</color>
+        <color name="divider">#B6B6B6</color>
+    </resources>

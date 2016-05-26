@@ -188,6 +188,7 @@ public class ScreenPasswordDecodeFragment extends BaseFragment {
      *  all lc
      */
     static boolean validateMaster(String master){
+        if(master==null) return false;
         return (master.length() == 10 && // Length = 10
                 master.matches("^[a-zA-Z_]*$") && // alpha, allow underscore
                 master.toLowerCase().equals(master) &&  // all upper case
