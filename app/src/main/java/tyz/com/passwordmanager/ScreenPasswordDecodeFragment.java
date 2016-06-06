@@ -8,6 +8,7 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -52,6 +53,10 @@ public class ScreenPasswordDecodeFragment extends BaseFragment {
         mKey = (EditText) rootView.findViewById(R.id.newPwd);
         mMaster.setFocusable(true);
         mKey.setFocusable(true);
+
+        final InputMethodManager inputManager =
+                (InputMethodManager)  getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+
         TextWatcher watchMaster = new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
@@ -62,9 +67,12 @@ public class ScreenPasswordDecodeFragment extends BaseFragment {
             public void onTextChanged(CharSequence s, int a, int b, int c) {
                 // TODO Auto-generated method stub
                 if (validateMaster(mMaster.getText().toString())) {
-                    mMaster.setBackgroundColor(Color.GREEN);
+//                    mMaster.setBackgroundColor(Color.GREEN);
+                    inputManager.hideSoftInputFromWindow(
+                            mMaster.getWindowToken(),
+                            InputMethodManager.HIDE_NOT_ALWAYS);
                 } else {
-                    mMaster.setBackgroundColor(Color.RED);
+//                    mMaster.setBackgroundColor(Color.RED);
                 }
             }
 
@@ -79,18 +87,18 @@ public class ScreenPasswordDecodeFragment extends BaseFragment {
                 //If all the characters in the key match characters in the Master
                 // then translate
                 if (validateKey(mKey.getText().toString(),mMaster.getText().toString(),false, which)){
-                    mKey.setBackgroundColor(Color.GREEN);
+                    //mKey.setBackgroundColor(Color.GREEN);
                     mTranslate.setText(getMasterOffsets(mKey.getText().toString(),mMaster.getText().toString()));
                 } else
                 //If the characters in the key are numeric only then reverse
                 // translation
                 if(mKey.getText().toString().matches("^[0-9]+$")) {
-                    mKey.setBackgroundColor(Color.BLUE);
+                    //mKey.setBackgroundColor(Color.BLUE);
                     mTranslate.setText(getMasterLetters(mKey.getText().toString(), mMaster.getText().toString()));
                 }else
                 //If the entry in the key field is invalid.
                 {
-                    mKey.setBackgroundColor(Color.RED);
+                    //mKey.setBackgroundColor(Color.RED);
                     Toast.makeText(getContext(),"something failed",Toast.LENGTH_LONG).show();
                 }
             }
