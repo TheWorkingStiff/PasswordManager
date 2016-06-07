@@ -25,4 +25,5 @@ public class DecodeActivity extends AppCompatActivity implements ScreenPasswordD
     }
 
 
+
 }

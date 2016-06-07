@@ -1,21 +1,24 @@
 package tyz.com.passwordmanager;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.text.method.PasswordTransformationMethod;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
 
 public class ScreenPasswordDecodeFragment extends BaseFragment {
-    static EditText mMaster, mKey;
+    static EditText mEditMaster, mEditKey;
+    static Button mBtnValidMaster, mBtnValidKey, mBtnShowMaster, mBtnShowKey;
+    boolean bShowMaster = false, bShowKey = false;
     TextView mTranslate;
     OnMasterPasswordSetListener mCallback;
 
@@ -49,10 +52,17 @@ public class ScreenPasswordDecodeFragment extends BaseFragment {
         final View rootView = inflater.inflate(R.layout.fragment_password_decode, container, false);
 
         mTranslate = (TextView) rootView.findViewById(R.id.txtTranslate) ;
-        mMaster = (EditText) rootView.findViewById(R.id.masterPwd);
-        mKey = (EditText) rootView.findViewById(R.id.newPwd);
-        mMaster.setFocusable(true);
-        mKey.setFocusable(true);
+        mEditMaster = (EditText) rootView.findViewById(R.id.masterPwd);
+        mEditKey = (EditText) rootView.findViewById(R.id.newPassword);
+        mBtnShowKey = (Button)  rootView.findViewById(R.id.show_key);
+        mBtnShowMaster = (Button)  rootView.findViewById(R.id.show_master);
+        mEditMaster.setFocusable(true);
+        mEditKey.setFocusable(true);
+
+        mBtnValidMaster = (Button) rootView.findViewById(R.id.btnValidMaster);
+        mBtnValidKey = (Button) rootView.findViewById(R.id.btnValidKey);
+        mBtnShowKey = (Button)  rootView.findViewById(R.id.show_key);
+        mBtnShowMaster = (Button)  rootView.findViewById(R.id.show_master);
 
         final InputMethodManager inputManager =
                 (InputMethodManager)  getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -66,13 +76,17 @@ public class ScreenPasswordDecodeFragment extends BaseFragment {
             @Override
             public void onTextChanged(CharSequence s, int a, int b, int c) {
                 // TODO Auto-generated method stub
-                if (validateMaster(mMaster.getText().toString())) {
-//                    mMaster.setBackgroundColor(Color.GREEN);
+                if (validateMaster(mEditMaster.getText().toString())) {
+                    mBtnValidMaster.setBackgroundResource(R.drawable.btngreen);
                     inputManager.hideSoftInputFromWindow(
-                            mMaster.getWindowToken(),
+                            mEditMaster.getWindowToken(),
                             InputMethodManager.HIDE_NOT_ALWAYS);
+                    mEditKey.setEnabled(true);
                 } else {
-//                    mMaster.setBackgroundColor(Color.RED);
+                    mBtnValidMaster.setBackgroundResource(R.drawable.btnred);
+                    mEditKey.setEnabled(false);
+
+//                    mEditMaster.setBackgroundColor(Color.RED);
                 }
             }
 
@@ -86,19 +100,21 @@ public class ScreenPasswordDecodeFragment extends BaseFragment {
                 int[] which = {};
                 //If all the characters in the key match characters in the Master
                 // then translate
-                if (validateKey(mKey.getText().toString(),mMaster.getText().toString(),false, which)){
-                    //mKey.setBackgroundColor(Color.GREEN);
-                    mTranslate.setText(getMasterOffsets(mKey.getText().toString(),mMaster.getText().toString()));
+                if (validateKey(mEditKey.getText().toString(), mEditMaster.getText().toString(),false, which)){
+                    //mEditKey.setBackgroundColor(Color.GREEN);
+                    mBtnValidKey.setBackgroundResource(R.drawable.btngreen);
+                    mTranslate.setText(getMasterOffsets(mEditKey.getText().toString(), mEditMaster.getText().toString()));
                 } else
                 //If the characters in the key are numeric only then reverse
                 // translation
-                if(mKey.getText().toString().matches("^[0-9]+$")) {
-                    //mKey.setBackgroundColor(Color.BLUE);
-                    mTranslate.setText(getMasterLetters(mKey.getText().toString(), mMaster.getText().toString()));
+                if(mEditKey.getText().toString().matches("^[0-9]+$")) {
+                    //mEditKey.setBackgroundColor(Color.BLUE);
+                    mTranslate.setText(getMasterLetters(mEditKey.getText().toString(), mEditMaster.getText().toString()));
                 }else
                 //If the entry in the key field is invalid.
                 {
-                    //mKey.setBackgroundColor(Color.RED);
+                    //mEditKey.setBackgroundColor(Color.RED);
+                    mBtnValidKey.setBackgroundResource(R.drawable.btnred);
                     Toast.makeText(getContext(),"something failed",Toast.LENGTH_LONG).show();
                 }
             }
@@ -109,8 +125,39 @@ public class ScreenPasswordDecodeFragment extends BaseFragment {
             }
 
         };
-        mMaster.addTextChangedListener(watchMaster);
-        mKey.addTextChangedListener(watchKey);
+
+        mBtnShowMaster.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                bShowMaster = !bShowMaster;
+                if(bShowMaster){
+                    mEditMaster.setTransformationMethod(null);
+                }else{
+                    mEditMaster.setTransformationMethod(new PasswordTransformationMethod());
+                }
+                ((Button)v).setBackgroundResource(bShowMaster?R.drawable.btneye:R.drawable.btneyeclosed);
+
+
+            }
+        });
+
+        mBtnShowKey.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                bShowKey = !bShowKey;
+                if(bShowKey){
+                    mEditKey.setTransformationMethod(null);
+                }else{
+                    mEditKey.setTransformationMethod(new PasswordTransformationMethod());
+                }
+                ((Button)v).setBackgroundResource(bShowKey?R.drawable.btneye:R.drawable.btneyeclosed);
+
+
+            }
+        });
+
+        mEditMaster.addTextChangedListener(watchMaster);
+        mEditKey.addTextChangedListener(watchKey);
 
         return rootView;
     }
@@ -148,8 +195,8 @@ public class ScreenPasswordDecodeFragment extends BaseFragment {
      * Test algorhithm
      StringBuilder sbOut = new StringBuilder(inKey.length());
      char[] offsets = inKey.toCharArray();
-     char [] masterArr = new char[mMaster.length()];
-     mMaster.getText().getChars(0,mMaster.length(),masterArr,0);
+     char [] masterArr = new char[mEditMaster.length()];
+     mEditMaster.getText().getChars(0,mEditMaster.length(),masterArr,0);
      for(char a : offsets){
      sbOut.append(masterArr[Integer.parseInt(String.valueOf(a))]);
      }
@@ -226,5 +273,25 @@ public class ScreenPasswordDecodeFragment extends BaseFragment {
                 flags |= (1 << flagIndex);
         }
         return true;
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        super.onSaveInstanceState(savedInstanceState);
+
+        savedInstanceState.putBoolean("showMaster", bShowMaster);
+        savedInstanceState.putBoolean("showKey", bShowKey);
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        if (savedInstanceState != null) {
+            // Restore last state for checked position.
+            boolean shouldShow = savedInstanceState.getBoolean("showMaster", false);
+            mEditMaster.setTransformationMethod(shouldShow? null: new PasswordTransformationMethod());
+            shouldShow = savedInstanceState.getBoolean("showKey", false);
+            mEditKey.setTransformationMethod(shouldShow? null:  new PasswordTransformationMethod());
+        }
     }
 }
